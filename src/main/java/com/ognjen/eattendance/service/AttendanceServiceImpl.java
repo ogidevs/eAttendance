@@ -83,22 +83,22 @@ public class AttendanceServiceImpl implements AttendanceService {
                 .orElse(null);
 
         if (scheduledClass == null) {
-            return "Greška: Uneti kod je nevažeći.";
+            throw new IllegalArgumentException("Greška Uneti kod je nevažeći.");
         }
 
         if (LocalDateTime.now().isAfter(scheduledClass.getCodeActiveUntil())) {
-            return "Greška: Vreme za prijavu je isteklo.";
+            throw new IllegalArgumentException("Greška Vreme za prijavu je isteklo.");
         }
 
         if (LocalDateTime.now().isBefore(scheduledClass.getClassDateTime())) {
-            return "Greška: Čas još uvek nije počeo";
+            throw new IllegalArgumentException("Greška Čas još uvek nije počeo");
         }
 
         boolean isEnrolled = scheduledClass.getSubject().getEnrolledStudents().stream()
                 .anyMatch(s -> s.getId().equals(studentId));
 
         if (!isEnrolled) {
-            return "Greška: Niste upisani na ovaj predmet.";
+            throw new IllegalArgumentException("Greška Niste upisani na ovaj predmet.");
         }
 
         if (attendanceRecordRepository.existsByClassIdAndStudentId(scheduledClass.getId(), studentId)) {

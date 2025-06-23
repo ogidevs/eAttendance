@@ -58,11 +58,10 @@ public class StudentController {
         // Pozivamo servis koji sadrži svu logiku
         String resultMessage = attendanceService.recordAttendance(code.trim().toUpperCase(), studentId);
 
-        // Koristimo RedirectAttributes da pošaljemo poruku nazad na dashboard
-        if (resultMessage.startsWith("Uspeh")) {
+        try {
             redirectAttributes.addFlashAttribute("success", resultMessage);
-        } else {
-            redirectAttributes.addFlashAttribute("error", resultMessage);
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Greška pri brisanju časa: " + e.getMessage());
         }
         return "redirect:/student/dashboard";
     }
