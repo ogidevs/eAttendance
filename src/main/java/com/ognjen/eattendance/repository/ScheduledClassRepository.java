@@ -44,6 +44,13 @@ public class ScheduledClassRepository {
                 .collect(Collectors.toList());
     }
 
+    public List<ScheduledClass> findClassesByStudentId(Long studentId) {
+        return scheduledClasses.stream()
+                .filter(sc -> sc.getSubject().getEnrolledStudents().stream()
+                        .anyMatch(student -> student.getId().equals(studentId)))
+                .collect(Collectors.toList());
+    }
+
     public ScheduledClass save(ScheduledClass scheduledClass) {
         if (scheduledClass.getId() == null) {
             scheduledClass.setId(idCounter.incrementAndGet());

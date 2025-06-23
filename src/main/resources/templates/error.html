@@ -1,0 +1,15 @@
+<!-- templates/error.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Error</title>
+</head>
+<body>
+<h1 th:if="${status == 404}">404 - Page Not Found</h1>
+<h1 th:unless="${status == 404}">An error occurred</h1>
+
+<p th:text="${error}">Error</p>
+<p th:text="${message}">Message</p>
+<p th:text="${path}">Path</p>
+</body>
+</html>

@@ -32,6 +32,9 @@ public class StudentRepository {
         } else {
             findById(student.getId()).ifPresent(existing -> {
                 int index = students.indexOf(existing);
+                if (student.getPassword() == "" || student.getPassword() == null) {
+                    student.setPassword(existing.getPassword());
+                }
                 students.set(index, student);
             });
         }

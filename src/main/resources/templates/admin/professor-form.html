@@ -12,7 +12,7 @@
     <div class="container">
         <div class="card">
             <h1 th:text="${professor.id == null} ? 'Dodaj novog profesora' : 'Izmeni podatke o profesoru'">Naslov</h1>
-            <form th:action="@{/admin/professors/save}" th:object="${student}" method="post">
+            <form th:action="@{/admin/professors/save}" th:object="${professor}" method="post">
                 <input type="hidden" th:field="*{id}">
 
                 <div><label for="firstName">Ime:</label><input type="text" id="firstName" th:field="*{firstName}" required></div>
@@ -22,7 +22,7 @@
                 <div><label for="title">Titula:</label><input type="text" id="title" th:field="*{title}" required></div>
 
                 <button type="submit" class="btn btn-success">Sačuvaj</button>
-                <a th:href="@{/admin/students}" class="btn btn-secondary">Odustani</a>
+                <a th:href="@{/admin/professors}" class="btn btn-secondary">Odustani</a>
             </form>
         </div>
     </div>

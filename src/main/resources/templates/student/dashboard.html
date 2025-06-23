@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="sr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Student Dashboard</title>
@@ -15,18 +15,65 @@
             <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
             <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
 
-            <form th:action="@{/student/check-in}" method="post">
-                <label for="attendanceCode">Unesite kod za prisustvo:</label>
-                <input type="text" id="attendanceCode" name="attendanceCode" placeholder="npr. A7B2X9" required>
+            <form th:action="@{/student/check-in}" method="get">
+                <label for="code">Unesite kod za prisustvo:</label>
+                <input type="text" id="code" name="code" placeholder="npr. A7B2X9" required>
                 <button type="submit" class="btn btn-success">Evidentiraj prisustvo</button>
             </form>
+            <div class="card">
+                <h2>Aktivni casovi</h2>
+
+                <div th:if="${#lists.isEmpty(availableClasses)}">
+                    <p>Trenutno nema aktivnih casova.</p>
+                </div>
+
+                <table th:unless="${#lists.isEmpty(availableClasses)}">
+                    <thead>
+                    <tr>
+                        <th>Predmet</th>
+                        <th>Datum časa</th>
+                        <th>Kod za prijavu</th>
+                        <th>Istek koda</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="record : ${availableClasses}">
+                        <td th:text="${record.subject.name}">Naziv predmeta</td>
+                        <td th:text="${#temporals.format(record.classDateTime, 'dd.MM.yyyy HH:mm')}">Datum i vreme časa</td>
+                        <td th:text="${record.attendanceCode}">Kod časa</td>
+                        <td th:text="${#temporals.format(record.codeActiveUntil, 'dd.MM.yyyy HH:mm')}">Kod važi do</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        <!-- Ovde bi se mogla dodati tabela sa istorijom prisustva -->
         <div class="card">
             <h2>Moja Istorija Prisustva</h2>
-            <p>Funkcionalnost prikaza istorije još nije implementirana.</p>
+
+            <div th:if="${#lists.isEmpty(history)}">
+                <p>Još uvek nemate evidentiranih prisustva.</p>
+            </div>
+
+            <table th:unless="${#lists.isEmpty(history)}">
+                <thead>
+                <tr>
+                    <th>Predmet</th>
+                    <th>Datum časa</th>
+                    <th>Vreme prijave</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Prolazimo kroz listu 'history' koju smo poslali iz kontrolera -->
+                <tr th:each="record : ${history}">
+                    <td th:text="${record.scheduledClass.subject.name}">Naziv predmeta</td>
+                    <td th:text="${#temporals.format(record.scheduledClass.classDateTime, 'dd.MM.yyyy HH:mm')}">Datum i vreme časa</td>
+                    <td th:text="${#temporals.format(record.checkInTime, 'dd.MM.yyyy HH:mm:ss')}">Vreme prijave</td>
+                </tr>
+                </tbody>
+            </table>
         </div>
+
     </div>
 </div>
 </body>

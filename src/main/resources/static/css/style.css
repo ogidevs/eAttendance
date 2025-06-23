@@ -79,6 +79,7 @@ form label {
 }
 form input[type="text"],
 form input[type="password"],
+form input[type="number"],
 form input[type="datetime-local"],
 form select {
     width: 100%;
@@ -142,4 +143,11 @@ tbody tr:hover {
     color: #842029;
     background-color: #f8d7da;
     border-color: #f5c2c7;
+}
+
+.qrcode-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
 }

@@ -19,9 +19,31 @@ public class AuthController {
 
     private final UserService userService;
 
+
     @GetMapping("/login")
-    public String loginPage() {
-        return "login"; // Vraća login.html
+    public String loginPage(HttpSession session) {
+        // 1. Proveri da li uloga postoji u sesiji
+        Object roleObject = session.getAttribute("userRole");
+
+        // 2. Ako ne postoji, korisnik nije ulogovan -> idi na login
+        if (roleObject == null) {
+            return "login";
+        }
+
+        String userRole = (String) roleObject;
+
+        // 3. U suprotnom, preusmeri na dashboard prema ulozi
+        switch (userRole) {
+            case "ADMIN":
+                return "redirect:/admin/dashboard";
+            case "PROFESSOR":
+                return "redirect:/professor/dashboard";
+            case "STUDENT":
+                return "redirect:/student/dashboard";
+            default:
+                // Ako se desi neka neočekivana uloga, siguran povratak na login
+                return "login";
+        }
     }
 
     @PostMapping("/login")
@@ -30,11 +52,14 @@ public class AuthController {
                                HttpSession session,
                                RedirectAttributes redirectAttributes) {
 
+        String redirectPath = (String) session.getAttribute("redirectAfterLogin");
+        session.removeAttribute("redirectAfterLogin");
+
         // 1. Provera za hardkodovanog Administratora
         if ("admin".equals(username) && "adminpass".equals(password)) {
             session.setAttribute("userRole", "ADMIN");
             session.setAttribute("username", "Administrator");
-            return "redirect:/admin/dashboard";
+            return redirectPath != null ? "redirect:" + redirectPath : "redirect:/admin/dashboard";
         }
 
         // 2. Provera za Profesore
@@ -44,7 +69,7 @@ public class AuthController {
             session.setAttribute("userRole", "PROFESSOR");
             session.setAttribute("userId", professor.getId());
             session.setAttribute("username", professor.getFirstName() + " " + professor.getLastName());
-            return "redirect:/professor/dashboard";
+            return redirectPath != null ? "redirect:" + redirectPath : "redirect:/professor/dashboard";
         }
 
         // 3. Provera za Studente
@@ -54,7 +79,7 @@ public class AuthController {
             session.setAttribute("userRole", "STUDENT");
             session.setAttribute("userId", student.getId());
             session.setAttribute("username", student.getFirstName() + " " + student.getLastName());
-            return "redirect:/student/dashboard";
+            return redirectPath != null ? "redirect:" + redirectPath : "redirect:/student/dashboard";
         }
 
         // Ako niko nije pronađen

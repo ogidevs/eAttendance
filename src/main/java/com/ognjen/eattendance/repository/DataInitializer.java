@@ -88,16 +88,19 @@ public class DataInitializer {
         ScheduledClass sc1 = new ScheduledClass();
         sc1.setSubject(sub1); // Čas za Web Sisteme
         sc1.setClassDateTime(LocalDateTime.now().minusDays(1).withHour(10).withMinute(15)); // Juče u 10:15
+        sc1.setDuration(45);
         scheduledClassRepository.save(sc1);
 
         ScheduledClass sc2 = new ScheduledClass();
         sc2.setSubject(sub1);
         sc2.setClassDateTime(LocalDateTime.now().plusDays(1).withHour(12).withMinute(15)); // Sutra u 12:15
+        sc2.setDuration(45);
         scheduledClassRepository.save(sc2);
 
         ScheduledClass sc3 = new ScheduledClass();
         sc3.setSubject(sub2); // Čas za Baze Podataka
         sc3.setClassDateTime(LocalDateTime.now().minusDays(2).withHour(14).withMinute(0)); // Pre dva dana u 14:00
+        sc3.setDuration(45);
         scheduledClassRepository.save(sc3);
 
         // --- 5. Kreiranje istorije prisustva (opciono, ali korisno za testiranje) ---

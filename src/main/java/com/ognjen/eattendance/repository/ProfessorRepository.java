@@ -1,6 +1,7 @@
 package com.ognjen.eattendance.repository;
 
 import com.ognjen.eattendance.model.Professor;
+import com.ognjen.eattendance.model.Student;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -30,8 +31,16 @@ public class ProfessorRepository {
     public Professor save(Professor professor) {
         if (professor.getId() == null) {
             professor.setId(idCounter.incrementAndGet());
+            professors.add(professor);
+        } else {
+            findById(professor.getId()).ifPresent(existing -> {
+                int index = professors.indexOf(existing);
+                if (professor.getPassword() == "" || professor.getPassword() == null) {
+                    professor.setPassword(existing.getPassword());
+                }
+                professors.set(index, professor);
+            });
         }
-        professors.add(professor);
         return professor;
     }
 }

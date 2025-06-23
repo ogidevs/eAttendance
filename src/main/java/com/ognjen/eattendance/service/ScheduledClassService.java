@@ -16,7 +16,11 @@ import java.util.Optional;
 public class ScheduledClassService {
 
     private final ScheduledClassRepository scheduledClassRepository;
-    private final SubjectRepository subjectRepository;
+    private final SubjectService subjectService;
+
+    public void save(ScheduledClass sc) {
+        scheduledClassRepository.save(sc);
+    }
 
     /**
      * Pronalazi sve zakazane časove za datog profesora.
@@ -25,6 +29,16 @@ public class ScheduledClassService {
      */
     public List<ScheduledClass> findClassesByProfessorId(Long professorId) {
         return scheduledClassRepository.findByProfessorId(professorId);
+    }
+
+
+    /**
+     * Pronalazi sve zakazane časove za datog studenta.
+     * @param studentID ID profesora.
+     * @return Lista zakazanih časova.
+     */
+    public List<ScheduledClass> findClassesByStudentId(Long studentID) {
+        return scheduledClassRepository.findClassesByStudentId(studentID);
     }
 
     /**
@@ -41,16 +55,28 @@ public class ScheduledClassService {
      * @param subjectId ID predmeta za koji se čas zakazuje.
      * @param classDateTime Datum i vreme održavanja časa.
      */
-    public void createNewClass(Long subjectId, LocalDateTime classDateTime) {
+    public void createNewClass(Long subjectId, LocalDateTime classDateTime, Integer duration) {
         // Pronalazimo predmet da bismo ga povezali sa časom
-        Subject subject = subjectRepository.findById(subjectId)
+        Subject subject = subjectService.findById(subjectId)
                 .orElseThrow(() -> new IllegalArgumentException("Predmet sa ID-jem " + subjectId + " ne postoji."));
 
+        if (duration <= 0) {
+            throw new IllegalArgumentException("Trajanje casa mora biti pozitivna vrednost");
+        }
         ScheduledClass newClass = new ScheduledClass();
         newClass.setSubject(subject);
         newClass.setClassDateTime(classDateTime);
+        newClass.setDuration(duration);
 
         scheduledClassRepository.save(newClass);
+    }
+
+    /**
+     * Traži sve časove po kodu
+     * @param code kod za prisustvo.
+     */
+    public Optional<ScheduledClass> findByAttendanceCode(String code) {
+        return scheduledClassRepository.findByAttendanceCode(code);
     }
 
     /**

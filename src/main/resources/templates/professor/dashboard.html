@@ -12,6 +12,9 @@
         <h1>Profesorski Panel</h1>
         <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
         <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+        <div th:if="${activeClassCode}" class="qrcode-wrapper">
+            <img th:src="@{'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + ${activeClassCode}}" alt="QRCode for Class Attendance">
+        </div>
 
         <div class="card">
             <h2>Zakaži novi čas</h2>
@@ -28,6 +31,8 @@
                 <div>
                     <label for="classDateTime">Datum i vreme časa:</label>
                     <input type="datetime-local" id="classDateTime" name="classDateTime" required>
+                    <label for="classDuration">Trajanje casa u minutima:</label>
+                    <input type="number" id="classDuration" name="classDuration" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Zakaži čas</button>
             </form>
@@ -40,27 +45,51 @@
                 <tr>
                     <th>Predmet</th>
                     <th>Datum i Vreme</th>
+                    <th>Trajanje (min)</th>
                     <th>Kod za prisustvo</th>
-                    <th>Akcije</th>
+                    <th>Kod aktivan do</th>
+                    <th>Prisutni</th>
+                    <th style="text-align: right;">Akcije</th>
                 </tr>
                 </thead>
+
+                <th:block th:each="class : ${classes}">
+                    <th:block th:with="records = ${attendanceMap[class.id]}">
+                        <tr>
+                            <td th:text="${class.subject.name}">Web Sistemi</td>
+                            <td th:text="${#temporals.format(class.classDateTime, 'dd.MM.yyyy HH:mm')}">Datum</td>
+                            <td th:text="${class.duration != null ? class.duration + ' min' : 'N/A'}">Trajanje časa</td>
+                            <td th:text="${class.attendanceCode != null ? class.attendanceCode : 'Nije generisan'}">KOD</td>
+                            <td th:text="${class.codeActiveUntil != null ? #temporals.format(class.codeActiveUntil, 'HH:mm:ss') : 'N/A'}">Trajanje Koda</td>
+                            <td th:text="${#lists.size(records)}">0</td>
+                            <td style="text-align: right;">
+                                <form th:action="@{/professor/class/{id}/generate-code(id=${class.id})}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-success btn-sm">Generiši Kod</button>
+                                </form>
+                                <form th:action="@{/professor/class/delete/{id}(id=${class.id})}" method="post" style="display:inline;"
+                                      onsubmit="return confirm('Da li ste sigurni da želite da obrišete ovaj čas?');">
+                                    <button type="submit" class="btn btn-danger btn-sm">Obriši</button>
+                                </form>
+                            </td>
+                        </tr>
+
+                        <tr th:if="${not #lists.isEmpty(records)}" class="attendance-details">
+                            <td colspan="7">
+                                <strong>Prisutni studenti:</strong>
+                                <ul style="margin: 0; padding-left: 20px;">
+                                    <!-- ISPRAVLJENA LINIJA -->
+                                    <li th:each="record : ${records}"
+                                        th:text="|${record.student.firstName} ${record.student.lastName} (prijavljen u ${#temporals.format(record.checkInTime, 'HH:mm:ss')})|">
+                                    </li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </th:block>
+                </th:block>
+
                 <tbody>
-                <tr th:each="class : ${classes}">
-                    <td th:text="${class.subject.name}">Web Sistemi</td>
-                    <td th:text="${#temporals.format(class.classDateTime, 'dd.MM.yyyy HH:mm')}">Datum</td>
-                    <td th:text="${class.attendanceCode != null ? class.attendanceCode : 'Nije generisan'}">KOD</td>
-                    <td>
-                        <form th:action="@{/professor/class/{id}/generate-code(id=${class.id})}" method="post" style="display:inline;">
-                            <button type="submit" class="btn btn-success btn-sm">Generiši Kod</button>
-                        </form>
-                        <form th:action="@{/professor/class/delete/{id}(id=${class.id})}" method="post" style="display:inline;"
-                              onsubmit="return confirm('Da li ste sigurni da želite da obrišete ovaj čas?');">
-                            <button type="submit" class="btn btn-danger btn-sm">Obriši</button>
-                        </form>
-                    </td>
-                </tr>
                 <tr th:if="${#lists.isEmpty(classes)}">
-                    <td colspan="4" style="text-align: center;">Nemate zakazanih časova.</td>
+                    <td colspan="7" style="text-align: center;">Nemate zakazanih časova.</td>
                 </tr>
                 </tbody>
             </table>

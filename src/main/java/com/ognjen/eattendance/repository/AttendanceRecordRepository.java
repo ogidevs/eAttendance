@@ -31,4 +31,10 @@ public class AttendanceRecordRepository {
                 .anyMatch(ar -> ar.getScheduledClass().getId().equals(classId) &&
                         ar.getStudent().getId().equals(studentId));
     }
+
+    public List<AttendanceRecord> findByStudentId(Long studentId) {
+        return attendanceRecords.stream()
+                .filter(ar -> ar.getStudent().getId().equals(studentId))
+                .collect(Collectors.toList());
+    }
 }
