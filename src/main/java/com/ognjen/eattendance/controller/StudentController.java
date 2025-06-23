@@ -45,7 +45,7 @@ public class StudentController {
     }
 
     @GetMapping("/check-in/{code}")
-    public String checkInViaQRCode(@PathVariable("code") String code, HttpSession session, RedirectAttributes redirectAttributes) {
+    public String checkIn(@PathVariable("code") String code, HttpSession session, RedirectAttributes redirectAttributes) {
         if (isNotstudent(session)) {
             session.setAttribute("redirectAfterLogin", "/student/check-in/" + code);
             return "redirect:/login";
@@ -55,10 +55,9 @@ public class StudentController {
             return "redirect:/login";
         }
 
-        // Pozivamo servis koji sadrži svu logiku
-        String resultMessage = attendanceService.recordAttendance(code.trim().toUpperCase(), studentId);
 
         try {
+            String resultMessage = attendanceService.recordAttendance(code.trim().toUpperCase(), studentId);
             redirectAttributes.addFlashAttribute("success", resultMessage);
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Greška pri brisanju časa: " + e.getMessage());

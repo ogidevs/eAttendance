@@ -108,6 +108,11 @@ form select {
 .btn-danger { background-color: var(--danger-color); }
 .btn-sm { padding: 0.25rem 0.5rem; font-size: 0.875rem; }
 
+
+.btn:hover {
+    background-color: #373b38;
+}
+
 /* --- Table Styles --- */
 table {
     width: 100%;
