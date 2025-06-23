@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="sr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Upravljanje Predmetima</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: page-header}"></div>
+<div class="main-content">
+    <div class="container">
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>Lista Predmeta</h2>
+                <a th:href="@{/admin/subjects/add}" class="btn btn-success">Dodaj novi predmet</a>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Naziv predmeta</th>
+                    <th>Šifra</th>
+                    <th>Profesor</th>
+                    <th style="text-align: right;">Akcije</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="subject : ${subjects}">
+                    <td th:text="${subject.id}">1</td>
+                    <td th:text="${subject.name}">Web Sistemi 1</td>
+                    <td th:text="${subject.code}">IT355</td>
+                    <td th:text="${subject.professor != null ? subject.professor.firstName + ' ' + subject.professor.lastName : 'N/A'}">Ime Profesora</td>
+                    <td style="text-align: right;">
+                        <a th:href="@{/admin/subjects/edit/{id}(id=${subject.id})}" class="btn btn-sm btn-primary">Izmeni</a>
+                        <form th:action="@{/admin/subjects/delete/{id}(id=${subject.id})}" method="post" style="display:inline;" onsubmit="return confirm('Da li ste sigurni?');">
+                            <button type="submit" class="btn btn-sm btn-danger">Obriši</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(subjects)}">
+                    <td colspan="5" style="text-align: center;">Nema predmeta u sistemu.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

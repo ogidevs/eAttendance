@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="sr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: page-header}"></div>
+
+<div class="main-content">
+    <div class="container">
+        <div class="card">
+            <h1>Administratorski Panel</h1>
+            <p>Dobrodošli. Izaberite opciju za upravljanje podacima sistema.</p>
+            <nav>
+                <ul style="list-style-type: none; padding-left: 0;">
+                    <li style="margin-bottom: 1rem;"><a th:href="@{/admin/students}" class="btn btn-primary" style="width: 250px;">Upravljanje Studentima</a></li>
+                    <li style="margin-bottom: 1rem;"><a th:href="@{/admin/professors}" class="btn btn-primary" style="width: 250px;">Upravljanje Profesorima</a></li>
+                    <li style="margin-bottom: 1rem;"><a th:href="@{/admin/subjects}" class="btn btn-primary" style="width: 250px;">Upravljanje Predmetima</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+</body>
+</html>

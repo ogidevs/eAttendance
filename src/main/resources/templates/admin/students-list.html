@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="sr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Upravljanje Studentima</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: page-header}"></div>
+
+<div class="main-content">
+    <div class="container">
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>Lista Studenata</h2>
+                <a th:href="@{/admin/students/add}" class="btn btn-success">Dodaj novog studenta</a>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Ime i Prezime</th>
+                    <th>Korisničko ime</th>
+                    <th>Broj indeksa</th>
+                    <th style="text-align: right;">Akcije</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="student : ${students}">
+                    <td th:text="${student.id}">1</td>
+                    <td th:text="${student.firstName} + ' ' + ${student.lastName}">Ime Prezime</td>
+                    <td th:text="${student.username}">username</td>
+                    <td th:text="${student.indexNumber}">IT 1/2024</td>
+                    <td style="text-align: right;">
+                        <a th:href="@{/admin/students/edit/{id}(id=${student.id})}" class="btn btn-sm btn-primary">Izmeni</a>
+                        <form th:action="@{/admin/students/delete/{id}(id=${student.id})}" method="post" style="display:inline;" onsubmit="return confirm('Da li ste sigurni da želite da obrišete ovog studenta?');">
+                            <button type="submit" class="btn btn-sm btn-danger">Obriši</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(students)}">
+                    <td colspan="5" style="text-align: center;">Nema studenata u sistemu.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

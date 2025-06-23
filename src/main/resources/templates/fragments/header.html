@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<header th:fragment="page-header">
+    <a th:href="@{/}" class="logo">eAttendance</a>
+    <div class="user-info" th:if="${session.username != null}">
+        <span>Dobrodošli, <strong th:text="${session.username}">Korisnik</strong></span>
+        <a th:href="@{/admin/dashboard}" th:if="${session.userRole == 'ADMIN'}">Back to panel</a>
+        <a th:href="@{/logout}">Odjavi se</a>
+    </div>
+</header>
+</body>
+</html>

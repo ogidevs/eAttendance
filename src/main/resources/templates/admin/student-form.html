@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="sr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Forma za Studenta</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: page-header}"></div>
+
+<div class="main-content">
+    <div class="container">
+        <div class="card">
+            <h1 th:text="${student.id == null} ? 'Dodaj novog studenta' : 'Izmeni podatke o studentu'">Naslov</h1>
+            <form th:action="@{/admin/students/save}" th:object="${student}" method="post">
+                <input type="hidden" th:field="*{id}">
+
+                <div><label for="firstName">Ime:</label><input type="text" id="firstName" th:field="*{firstName}" required></div>
+                <div><label for="lastName">Prezime:</label><input type="text" id="lastName" th:field="*{lastName}" required></div>
+                <div><label for="username">Korisničko ime:</label><input type="text" id="username" th:field="*{username}" required></div>
+                <div><label for="password">Lozinka:</label><input type="password" id="password" th:field="*{password}" th:required="${student.id == null}" th:placeholder="${student.id != null} ? 'Ostavite prazno ako ne želite da menjate' : ''"></div>
+                <div><label for="indexNumber">Broj indeksa:</label><input type="text" id="indexNumber" th:field="*{indexNumber}" required></div>
+
+                <button type="submit" class="btn btn-success">Sačuvaj</button>
+                <a th:href="@{/admin/students}" class="btn btn-secondary">Odustani</a>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

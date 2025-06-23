@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: page-header}"></div>
+<div class="main-content">
+    <div class="container">
+        <div class="card">
+            <h2>Evidencija Prisustva</h2>
+
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+            <form th:action="@{/student/check-in}" method="post">
+                <label for="attendanceCode">Unesite kod za prisustvo:</label>
+                <input type="text" id="attendanceCode" name="attendanceCode" placeholder="npr. A7B2X9" required>
+                <button type="submit" class="btn btn-success">Evidentiraj prisustvo</button>
+            </form>
+        </div>
+
+        <!-- Ovde bi se mogla dodati tabela sa istorijom prisustva -->
+        <div class="card">
+            <h2>Moja Istorija Prisustva</h2>
+            <p>Funkcionalnost prikaza istorije još nije implementirana.</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

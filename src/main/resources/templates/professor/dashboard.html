@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Professor Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: page-header}"></div>
+<div class="main-content">
+    <div class="container">
+        <h1>Profesorski Panel</h1>
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+        <div class="card">
+            <h2>Zakaži novi čas</h2>
+            <form th:action="@{/professor/class/save}" method="post">
+                <div>
+                    <label for="subjectId">Izaberi predmet:</label>
+                    <select id="subjectId" name="subjectId" required>
+                        <option value="">-- Molimo izaberite --</option>
+                        <option th:each="subject : ${subjects}"
+                                th:value="${subject.id}"
+                                th:text="${subject.name} + ' (' + ${subject.code} + ')'"></option>
+                    </select>
+                </div>
+                <div>
+                    <label for="classDateTime">Datum i vreme časa:</label>
+                    <input type="datetime-local" id="classDateTime" name="classDateTime" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Zakaži čas</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Moji zakazani časovi</h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>Predmet</th>
+                    <th>Datum i Vreme</th>
+                    <th>Kod za prisustvo</th>
+                    <th>Akcije</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="class : ${classes}">
+                    <td th:text="${class.subject.name}">Web Sistemi</td>
+                    <td th:text="${#temporals.format(class.classDateTime, 'dd.MM.yyyy HH:mm')}">Datum</td>
+                    <td th:text="${class.attendanceCode != null ? class.attendanceCode : 'Nije generisan'}">KOD</td>
+                    <td>
+                        <form th:action="@{/professor/class/{id}/generate-code(id=${class.id})}" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-success btn-sm">Generiši Kod</button>
+                        </form>
+                        <form th:action="@{/professor/class/delete/{id}(id=${class.id})}" method="post" style="display:inline;"
+                              onsubmit="return confirm('Da li ste sigurni da želite da obrišete ovaj čas?');">
+                            <button type="submit" class="btn btn-danger btn-sm">Obriši</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(classes)}">
+                    <td colspan="4" style="text-align: center;">Nemate zakazanih časova.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

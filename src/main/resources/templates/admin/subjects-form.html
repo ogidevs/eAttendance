@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="sr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Forma za Predmet</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: page-header}"></div>
+<div class="main-content">
+    <div class="container">
+        <div class="card">
+            <h1 th:text="${subject.id == null} ? 'Dodaj novi predmet' : 'Izmeni predmet'">Naslov</h1>
+            <form th:action="@{/admin/subjects/save}" th:object="${subject}" method="post">
+                <input type="hidden" th:field="*{id}">
+
+                <div><label for="name">Naziv predmeta:</label><input type="text" id="name" th:field="*{name}" required></div>
+                <div><label for="code">Šifra predmeta:</label><input type="text" id="code" th:field="*{code}" required></div>
+
+                <div>
+                    <label for="professorId">Profesor:</label>
+                    <select id="professorId" name="professorId" required>
+                        <option value="">-- Izaberi profesora --</option>
+                        <option th:each="p : ${allProfessors}"
+                                th:value="${p.id}"
+                                th:text="${p.firstName} + ' ' + ${p.lastName}"
+                                th:selected="${subject.professor != null and subject.professor.id == p.id}"></option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="studentIds">Upisani studenti (drži Ctrl/Cmd za višestruki izbor):</label>
+                    <select id="studentIds" name="studentIds" multiple="multiple" style="height: 200px;">
+                        <option th:each="s : ${allStudents}"
+                                th:value="${s.id}"
+                                th:text="${s.firstName} + ' ' + s.lastName} + ' (' + ${s.indexNumber} + ')'"
+                                th:selected="${subject.enrolledStudents != null and #lists.contains(subject.enrolledStudents.![id], s.id)}"></option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-success">Sačuvaj</button>
+                <a th:href="@{/admin/subjects}" class="btn btn-secondary">Odustani</a>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
