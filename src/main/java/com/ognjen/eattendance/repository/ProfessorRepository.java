@@ -1,7 +1,6 @@
 package com.ognjen.eattendance.repository;
 
 import com.ognjen.eattendance.model.Professor;
-import com.ognjen.eattendance.model.Student;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;

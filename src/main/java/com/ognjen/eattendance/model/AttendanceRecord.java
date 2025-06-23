@@ -2,6 +2,7 @@ package com.ognjen.eattendance.model;
 
 
 import lombok.Data;
+
 import java.time.LocalDateTime;
 
 @Data

@@ -12,18 +12,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DataInitializer {
 
-    // Dependency Injection: Spring će automatski ubaciti instance svih potrebnih repozitorijuma.
+    // Dependency Injection
     private final StudentRepository studentRepository;
     private final ProfessorRepository professorRepository;
     private final SubjectRepository subjectRepository;
     private final ScheduledClassRepository scheduledClassRepository;
     private final AttendanceRecordRepository attendanceRecordRepository;
 
-    /**
-     * @PostConstruct - Anotacija koja osigurava da će ova metoda biti izvršena
-     *                  JEDNOM, odmah nakon što je Spring kreirao 'DataInitializer' bean
-     *                  i ubacio sve njegove zavisnosti.
-     */
     @PostConstruct
     public void init() {
         // --- 1. Kreiranje profesora ---
@@ -119,7 +114,6 @@ public class DataInitializer {
         attendanceRecordRepository.save(ar2);
 
 
-        // Ispis u konzolu da potvrdimo da je inicijalizacija prošla
         System.out.println("=====================================================");
         System.out.println("Data Initializer: In-memory database populated with test data.");
         System.out.println("=====================================================");
