@@ -2,7 +2,9 @@ package com.ognjen.eattendance.controller;
 
 import com.ognjen.eattendance.model.AttendanceRecord;
 import com.ognjen.eattendance.model.ScheduledClass;
+import com.ognjen.eattendance.model.Subject;
 import com.ognjen.eattendance.service.AttendanceService;
+import com.ognjen.eattendance.service.SubjectService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -20,6 +22,7 @@ import java.util.List;
 public class StudentController {
 
     private final AttendanceService attendanceService;
+    private final SubjectService subjectService;
 
     // Provera da li je korisnik ulogovan kao student
     private boolean isNotstudent(HttpSession session) {
@@ -35,7 +38,8 @@ public class StudentController {
         if (studentId == null) {
             return "redirect:/login"; // Sigurnosna provera
         }
-
+        List<Subject> subjects = subjectService.findSubjectsByStudentId(studentId);
+        model.addAttribute("subjects", subjects);
         List<AttendanceRecord> attendanceHistory = attendanceService.getAttendanceHistoryForStudent(studentId);
         model.addAttribute("history", attendanceHistory);
         List<ScheduledClass> availableClasses = attendanceService.getAvailableClassesForStudent(studentId);

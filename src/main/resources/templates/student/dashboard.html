@@ -73,6 +73,19 @@
                     </tbody>
                 </table>
             </div>
+            <div class="card">
+                <h2>Moji predmeti</h2>
+                <ul th:if="${#lists.isEmpty(subjects)}">
+                    <li>Nema upisanih predmeta.</li>
+                </ul>
+                <ul>
+                    <li th:each="predmet : ${subjects}">
+                        <strong th:text="${predmet.name}">Naziv predmeta</strong> -
+                        <span th:text="${predmet.code}">Šifra</span><br/>
+                        Profesor: <span th:text="${predmet.professor.firstName + ' ' + predmet.professor.lastName}">Ime profesora</span><br/>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
     <script>

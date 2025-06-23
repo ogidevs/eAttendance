@@ -94,6 +94,32 @@
                 </tbody>
             </table>
         </div>
+        <div class="card">
+            <h2>Moji predmeti</h2>
+            <ul th:if="${#lists.isEmpty(subjects)}">
+                <li>Nema upisanih predmeta.</li>
+            </ul>
+            <ul>
+                <li th:each="predmet : ${subjects}">
+                    <strong th:text="${predmet.name}">Naziv predmeta</strong> -
+                    <span th:text="${predmet.code}">Šifra</span><br/>
+                    Broj studenata: <span th:text="${#lists.size(predmet.enrolledStudents)}">0</span><br/>
+
+                    <div th:if="${#lists.size(predmet.enrolledStudents) > 0}">
+                        <p>Studenti upisani na predmet:</p>
+                        <ul>
+                            <li th:each="student : ${predmet.enrolledStudents}">
+                                <span th:text="${student.firstName}">Ime</span>
+                                <span th:text="${student.lastName}">Prezime</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div th:if="${#lists.size(predmet.enrolledStudents) == 0}">
+                        <p>Nema upisanih studenata.</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
 </body>
