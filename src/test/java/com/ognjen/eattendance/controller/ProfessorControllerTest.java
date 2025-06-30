@@ -1,9 +1,12 @@
 package com.ognjen.eattendance.controller;
 
+import com.ognjen.eattendance.model.AttendanceRecord;
 import com.ognjen.eattendance.model.ScheduledClass;
+import com.ognjen.eattendance.model.Subject;
 import com.ognjen.eattendance.service.AttendanceService;
 import com.ognjen.eattendance.service.ScheduledClassService;
 import com.ognjen.eattendance.service.SubjectService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +15,16 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -30,6 +41,37 @@ class ProfessorControllerTest {
     private AttendanceService attendanceService;
     @MockitoBean
     private ScheduledClassService scheduledClassService;
+
+    private MockHttpSession professorSession;
+
+    @BeforeEach
+    void setUp() {
+        professorSession = new MockHttpSession();
+        professorSession.setAttribute("userRole", "PROFESSOR");
+        professorSession.setAttribute("userId", 1L);
+    }
+
+    @Test
+    @DisplayName("TC-PROF-CLASS-01: Profesor uspešno zakazuje novi čas")
+    void saveClass_ShouldRedirectWithSuccessMessage() throws Exception {
+        Subject mockSubject = new Subject();
+        mockSubject.setId(1L);
+        when(subjectService.findSubjectsByProfessorId(1L)).thenReturn(List.of(mockSubject));
+
+        // Act & Assert
+        mockMvc.perform(post("/professor/class/save")
+                        .session(professorSession)
+                        .param("subjectId", "1")
+                        .param("classDateTime", "2025-01-01T10:00:00")
+                        .param("classDuration", "90"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/professor/dashboard"))
+                // ISPRAVKA: Proveravamo flash atribut, ne model atribut
+                .andExpect(flash().attributeExists("success"))
+                .andExpect(flash().attribute("success", "Novi čas je uspešno zakazan!"));
+
+        verify(scheduledClassService).createNewClass(anyLong(), any(LocalDateTime.class), any(Integer.class));
+    }
 
     @Test
     @DisplayName("TC-INT-01: Uspešno generisanje koda za prisustvo od strane profesora")

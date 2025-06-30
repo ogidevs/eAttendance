@@ -1,6 +1,10 @@
 package com.ognjen.eattendance.controller;
+import com.ognjen.eattendance.model.AttendanceRecord;
+import com.ognjen.eattendance.model.ScheduledClass;
+import com.ognjen.eattendance.model.Subject;
 import com.ognjen.eattendance.service.AttendanceService;
 import com.ognjen.eattendance.service.SubjectService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +12,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -23,6 +33,15 @@ class StudentControllerTest {
 
     @MockitoBean
     private SubjectService subjectService; // Potreban jer je deo konstruktora
+
+    private MockHttpSession studentSession;
+
+    @BeforeEach
+    void setUp() {
+        studentSession = new MockHttpSession();
+        studentSession.setAttribute("userRole", "STUDENT");
+        studentSession.setAttribute("userId", 1L);
+    }
 
     @Test
     @DisplayName("Putanja 1 (Happy Path): Student je ulogovan i uspešno evidentira prisustvo")
@@ -76,5 +95,38 @@ class StudentControllerTest {
                 .andExpect(redirectedUrl("/student/dashboard"))
                 .andExpect(flash().attributeExists("error"))
                 .andExpect(flash().attribute("error", "Greška pri brisanju časa: Greška Vreme za prijavu je isteklo."));
+    }
+
+    @Test
+    @DisplayName("TC-STU-HIST-01: Prikaz istorije prisustva na dashboard-u")
+    void studentDashboard_ShouldContainHistoryAttribute() throws Exception {
+        Subject mockSubject = new Subject();
+        mockSubject.setId(10L);
+        mockSubject.setName("Test Predmet");
+
+        ScheduledClass mockClass = new ScheduledClass();
+        mockClass.setId(100L);
+        mockClass.setSubject(mockSubject);
+        mockClass.setClassDateTime(LocalDateTime.now().minusDays(1));
+
+        AttendanceRecord mockRecord = new AttendanceRecord();
+        mockRecord.setId(1000L);
+        mockRecord.setScheduledClass(mockClass);
+        mockRecord.setCheckInTime(LocalDateTime.now().minusDays(1).plusMinutes(5));
+
+        List<AttendanceRecord> mockHistory = Collections.singletonList(mockRecord);
+
+        when(attendanceService.getAttendanceHistoryForStudent(anyLong())).thenReturn(mockHistory);
+        when(subjectService.findSubjectsByStudentId(anyLong())).thenReturn(Collections.emptyList());
+        when(attendanceService.getAvailableClassesForStudent(anyLong())).thenReturn(Collections.emptyList());
+
+
+        // Act & Assert
+        mockMvc.perform(get("/student/dashboard")
+                        .session(studentSession))
+                .andExpect(status().isOk())
+                .andExpect(view().name("student/dashboard"))
+                .andExpect(model().attributeExists("history"))
+                .andExpect(model().attribute("history", mockHistory));
     }
 }
