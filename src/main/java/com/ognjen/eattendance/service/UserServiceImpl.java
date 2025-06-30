@@ -17,6 +17,8 @@ public class UserServiceImpl implements UserService {
     private final StudentRepository studentRepository;
     private final ProfessorRepository professorRepository;
 
+    private final SubjectService subjectService;
+
     // --- METODE ZA PRONALAŽENJE KORISNIKA (ZA LOGIN) ---
 
     /**
@@ -69,6 +71,9 @@ public class UserServiceImpl implements UserService {
      * @param id ID studenta koji se briše
      */
     public void deleteStudentById(Long id) {
+        if (!subjectService.findSubjectsByStudentId(id).isEmpty()) {
+            throw new IllegalArgumentException("Student prvo mora biti obrisan sa predmeta!");
+        }
         studentRepository.deleteById(id);
     }
 
@@ -104,6 +109,9 @@ public class UserServiceImpl implements UserService {
      * @param id ID profesora koji se briše
      */
     public void deleteProfessorById(Long id) {
+        if (!subjectService.findSubjectsByProfessorId(id).isEmpty()) {
+            throw new IllegalArgumentException("Profesor prvo mora biti obrisan sa predmeta!");
+        }
         professorRepository.deleteById(id);
     }
 }

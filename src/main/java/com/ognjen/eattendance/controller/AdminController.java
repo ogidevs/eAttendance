@@ -72,8 +72,12 @@ public class AdminController {
     @PostMapping("/students/delete/{id}")
     public String deleteStudent(@PathVariable Long id, RedirectAttributes redirectAttributes, HttpSession session) {
         if (isNotAdmin(session)) return "redirect:/login";
-        userService.deleteStudentById(id);
-        redirectAttributes.addFlashAttribute("success", "Student je uspešno obrisan.");
+        try {
+            userService.deleteStudentById(id);
+            redirectAttributes.addFlashAttribute("success", "Student je uspešno obrisan.");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
         return "redirect:/admin/students";
     }
 
@@ -110,8 +114,12 @@ public class AdminController {
     @PostMapping("/professors/delete/{id}")
     public String deleteProfessor(@PathVariable Long id, RedirectAttributes redirectAttributes, HttpSession session) {
         if (isNotAdmin(session)) return "redirect:/login";
-        userService.deleteProfessorById(id);
-        redirectAttributes.addFlashAttribute("success", "Profesor je uspešno obrisan.");
+        try {
+            userService.deleteProfessorById(id);
+            redirectAttributes.addFlashAttribute("success", "Profesor je uspešno obrisan.");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
         return "redirect:/admin/professors";
     }
 
