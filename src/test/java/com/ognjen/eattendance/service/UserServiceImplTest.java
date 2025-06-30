@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserServiceImplTest {
 
     private UserService userService;
+    private SubjectService subjectService;
     private StudentRepository studentRepository;
     private ProfessorRepository professorRepository;
 
@@ -21,7 +22,7 @@ class UserServiceImplTest {
     void setUp() {
         studentRepository = new StudentRepository();
         professorRepository = new ProfessorRepository();
-        userService = new UserServiceImpl(studentRepository, professorRepository);
+        userService = new UserServiceImpl(studentRepository, professorRepository, subjectService);
 
         // Dodavanje test korisnika
         Student s1 = new Student();

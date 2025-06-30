@@ -43,7 +43,7 @@ class AttendanceServiceImplTest {
         attendanceRecordRepository = new AttendanceRecordRepository();
 
         // Inicijalizacija servisa sa repozitorijumima
-        userService = new UserServiceImpl(studentRepository, professorRepository);
+        userService = new UserServiceImpl(studentRepository, professorRepository, subjectService);
         subjectService = new SubjectServiceImpl(subjectRepository);
         scheduledClassService = new ScheduledClassServiceImpl(scheduledClassRepository, subjectService);
         attendanceService = new AttendanceServiceImpl(attendanceRecordRepository, scheduledClassService, userService);
